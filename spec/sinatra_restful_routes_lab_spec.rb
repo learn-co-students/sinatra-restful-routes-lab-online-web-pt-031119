@@ -10,32 +10,56 @@ describe "Recipe App" do
     @recipe2 = Recipe.create(:name => "waldorf salad", :ingredients => "apples, cabbage, oil, vinegar", :cook_time => "0")
   end
 
-  describe "Index page '/recipes'" do
-
+  describe "new page '/recipes/new'" do
     before do
-      visit "/recipes"
+      visit "/recipes/new"
     end
 
     it 'responds with a 200 status code' do
       expect(page.status_code).to eq(200)
     end
 
-    it "displays a list of recipes" do
-      expect(page.body).to include(recipe_name)
-      expect(page.body).to include(@recipe2.name)
+    it "contains a form to create the recipe" do
+      expect(page.body).to include("</form>")
     end
 
-    it "contains links to each recipe's show page" do
-      all_link_hrefs = page.all(:css, "a[href]").map do |element| 
-        element[:href] 
-      end
-      expect(all_link_hrefs).to include("/recipes/#{@recipe1.id}")
-      expect(all_link_hrefs).to include("/recipes/#{@recipe2.id}")
-    end
+    it "posts the form back to create a new recipe" do
 
+      fill_in :name, :with => "Enchiladas con Salsa Verde"
+      fill_in :ingredients, :with => "Tortillas, Queso Blanco, Tomatillos, Onion, Garlic, Black beans, Cilantro"
+      fill_in :cook_time, :with => "20 minutes"
+
+      page.find(:css, "[type=submit]").click
+
+      expect(page).to have_content("Enchiladas con Salsa Verde")
+      expect(page).to have_content("Tortillas, Queso Blanco, Tomatillos, Onion, Garlic, Black beans, Cilantro")
+      expect(page).to have_content("20 minutes")
+
+    end
   end
 
-    
+  describe "creating a new recipe" do 
+    before do 
+      params = {
+        "name" => "pumpkin pie",
+        "ingredients" => "pumpkin, flour, butter, sugar",
+        "cook_time" => "1 hour"
+      }
+      post '/recipes', params
+      follow_redirect!
+    end
+
+    it "creates a new recipe and saves to the database" do
+      expect(Recipe.all.count).to eq(3)
+      expect(Recipe.last.name).to eq("pumpkin pie")
+    end
+
+    it "redirects to the recipe show page" do 
+      expect(last_request.url).to include("/recipes/#{Recipe.last.id}")
+    end
+  end
+
+  
   describe "show page '/recipes/:id'" do
     before do
       visit "/recipes/#{@recipe1.id}"
@@ -89,54 +113,6 @@ describe "Recipe App" do
 
   end
 
-  describe "new page '/recipes/new'" do
-    before do
-      visit "/recipes/new"
-    end
-
-    it 'responds with a 200 status code' do
-      expect(page.status_code).to eq(200)
-    end
-
-    it "contains a form to create the recipe" do
-      expect(page.body).to include("</form>")
-    end
-
-    it "posts the form back to create a new recipe" do
-
-      fill_in :name, :with => "Enchiladas con Salsa Verde"
-      fill_in :ingredients, :with => "Tortillas, Queso Blanco, Tomatillos, Onion, Garlic, Black beans, Cilantro"
-      fill_in :cook_time, :with => "20 minutes"
-
-      page.find(:css, "[type=submit]").click
-
-      expect(page).to have_content("Enchiladas con Salsa Verde")
-      expect(page).to have_content("Tortillas, Queso Blanco, Tomatillos, Onion, Garlic, Black beans, Cilantro")
-      expect(page).to have_content("20 minutes")
-
-    end
-  end
-
-  describe "creating a new recipe" do 
-    before do 
-      params = {
-        "name" => "pumpkin pie",
-        "ingredients" => "pumpkin, flour, butter, sugar",
-        "cook_time" => "1 hour"
-      }
-      post '/recipes', params
-      follow_redirect!
-    end
-
-    it "creates a new recipe and saves to the database" do
-      expect(Recipe.all.count).to eq(3)
-      expect(Recipe.last.name).to eq("pumpkin pie")
-    end
-
-    it "redirects to the recipe show page" do 
-      expect(last_request.url).to include("/recipes/#{Recipe.last.id}")
-    end
-  end
 
   describe "updating a recipe" do
     before do
@@ -163,6 +139,31 @@ describe "Recipe App" do
 
     it "redirects to the recipe show page" do
       expect(page.current_path).to eq("/recipes/#{@cookie.id}")
+    end
+
+  end
+
+  describe "Index page '/recipes'" do
+
+    before do
+      visit "/recipes"
+    end 
+
+    it 'responds with a 200 status code' do
+      expect(page.status_code).to eq(200)
+    end
+
+    it "displays a list of recipes" do
+      expect(page.body).to include(recipe_name)
+      expect(page.body).to include(@recipe2.name)
+    end
+
+    it "contains links to each recipe's show page" do
+      all_link_hrefs = page.all(:css, "a[href]").map do |element| 
+        element[:href] 
+      end
+      expect(all_link_hrefs).to include("/recipes/#{@recipe1.id}")
+      expect(all_link_hrefs).to include("/recipes/#{@recipe2.id}")
     end
 
   end
