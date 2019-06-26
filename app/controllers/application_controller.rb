@@ -26,21 +26,22 @@ get '/recipes/:id/edit' do
   erb :edit
 end
 
-post '/recipes/new' do
+post '/recipes' do
 
-@recipe = Recipe.create(:name => params[:name], :ingredients => params[:ingredients], :cook_time => params[:cook_time])
-@recipe.save
+@recipe2 = Recipe.create(:name => params[:name], :ingredients => params[:ingredients], :cook_time => params[:cook_time])
+
 
 redirect to "/recipes/#{@recipe.id}"
 
 end
 
 patch '/recipes/:id' do 
+  
   @recipe = Recipe.find_by_id(params[:id])
   @recipe.name = params[:name]
   @recipe.ingredients = params[:ingredients]
-  @recipe.save
-  redirect to '/recipes/:id'
+ @recipe.save
+ redirect to '/recipes/:id'
 end
 
   get '/recipes/:id' do
@@ -50,7 +51,11 @@ end
 
 end
 
-
+delete '/recipes/:id' do #destroy action
+  @recipe = Recipe.find_by_id(params[:id])
+  @recipe.delete
+  redirect to '/recipes'
+end
 
 
 end
