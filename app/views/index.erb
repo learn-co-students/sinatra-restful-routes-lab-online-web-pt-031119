@@ -3,6 +3,10 @@
     <ul>
         <% @recipes.each do |recipe| %>
             <li><%= recipe.name %></li>
-            <a href="/recipes/<%= recipe.id %>">Recipe Page</a>            
+            <br>
+            <a href="/recipes/<%= recipe.id %>">View Recipe</a>
+            <br>
+            <br>            
         <% end %>
-    </ul>
+    
+    
