@@ -7,13 +7,19 @@ class ApplicationController < Sinatra::Base
     
   end
 
-  get '/recipes' do
+  get '/' do 
+    redirect to '/recipes'
+  end 
+
+  get '/recipes' do  #homepage
     @recipes = Recipe.all
+    #binding.pry 
     erb :index 
   end 
 
-  get '/recipe/new' do
-    
-  end 
+  get '/recipes/:id' do  #show
+    @recipes = Recipe.find(params[:id])
+    erb :show 
+  end
 
 end

@@ -1,0 +1,17 @@
+<h1><%= @recipes.name %></h1>
+
+    <h2>Ingredients:</h2>
+        <ul>
+            <% @recipes.ingredients.split(", ").each do |ingredient| %>             
+                <li><%= ingredient %></li>
+            <% end %>                
+        </ul>
+
+    <h2>Cook Time:</h2>
+
+        <p><%= @recipes.cook_time %></p>  
+
+    
+
+
+     
