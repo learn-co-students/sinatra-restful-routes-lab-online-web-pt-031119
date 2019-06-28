@@ -1,0 +1,12 @@
+<div style="margin-left: 30%; padding-top: 5%">
+  <h2><%= @recipe.name %></h2>
+  <p>Ingredients:</p>
+  <p style="box-sizing: content-box; width: 25%; padding 15px;"><%= @recipe.ingredients %></p>
+  <p style="padding-right: 20px" for="cook_time">Cook Time: <%= @recipe.cook_time %></p><br>
+
+  <form action="/recipes/<%= @recipe.id %>" method="post">
+    <input type="hidden" name="_method" value="delete" />
+    <input type="submit" value="delete"/>
+  </form>
+
+</div>
